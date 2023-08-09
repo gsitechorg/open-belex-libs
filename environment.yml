@@ -1,0 +1,7 @@
+name: open-belex-libs
+channels:
+  - conda-forge
+  - gsi
+dependencies:
+  - open-belex=1.0.0
+  - python=3.11
