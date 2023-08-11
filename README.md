@@ -1,43 +1,37 @@
-# BELEX, THE REPO
+# Belex Libs (Open Source)
 
 Bit-Engine Language of Expressions
 
-Version of 06 Jan 2022
+Version of 10 Aug 2023
 
-# SET UP PYTHON AND REQUIREMENTS
+# Initialization
 
-Make sure you have a virtual environment of some kind that has the
-necessary Python packages installed. Here is an example using `venv`, but you
-may use `conda` just as easily:
+At the moment, only conda environments are supported. The following shows how
+to set up yours:
 
 ```bash
-  cd ~/GSI  # or wherever you likd to keep your project directories
+# location of your project directories
+WORKSPACE="$HOME/tmp"
+mkdir -p "$WORKSPACE"
+cd "$WORKSPACE"
 
-  # Clone the Belex repositories (choose the same branch for all repositories):
-  # 1. "--branch master" -> clone latest release code
-  # 2. "--branch develop" -> clone latest development code
-  git clone --branch develop git@bitbucket.org:gsitech/belex.git
-  git clone --branch develop git@bitbucket.org:gsitech/belex-libs.git
-  git clone --branch develop git@bitbucket.org:gsitech/belex-tests.git
+# Clone the Belex repositories (choose the same branch for all repositories):
+# 1. "master" -> clone latest release code
+# 2. "develop" -> clone latest development code
+DEFAULT_BRANCH="develop"
+BELEX_BRANCH="$DEFAULT_BRANCH"
+BELEX_LIBS_BRANCH="$DEFAULT_BRANCH"
 
-  # Initialize your virtual environment
-  cd ~/GSI/belex-tests  # or wherever you cloned the belex-tests repo
-  python -m venv venv  # you need Python>=3.8
-  source venv/bin/activate
+git clone --branch "$BELEX_BRANCH" git@bitbucket.org:gsitech/open-belex.git
+git clone --branch "$BELEX_LIBS_BRANCH" git@bitbucket.org:gsitech/open-belex-libs.git
 
-  cd ~/GSI/belex  # or wherever you cloned the belex repo
-  pip install -e .
+# Create the conda environment
+cd "$WORKSPACE/open-belex-libs"
+mamba env create --force -f environment.yml
 
-  cd ~/GSI/belex-libs  # or wherever you cloned the belex-libs repo
-  pip install -e .
+conda activate open-belex-libs
 
-  cd ~/GSI/belex-tests  # or wherever you cloned the belex-tests repo
-  pip install -e .
-  
-  pip install --upgrade ninja
-  pip install \
-      --upgrade \
-      --index-url http://192.168.42.9:8081/repository/gsi-pypi/simple \
-      --trusted-host 192.168.42.9 \
-      meson
+pip install \
+  -e "$WORKSPACE/open-belex" \
+  -e "$WORKSPACE/open-belex-libs"
 ```
