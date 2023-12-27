@@ -51,21 +51,43 @@ def _write_test_markers(
 
 
 @belex_apl
+def read_from_marked(Belex,
+        dst: VR, src: VR, mrk: VR, mrks: Section) -> None:
+    r"""Read u16s from the marked plats of 'src'. Leave the
+    results in 'dst'. Do not disturb the other plats of 'dst'.
+    Markers are in section 'mrks' of VR 'mrk'."""
+    RL[:] <= 0
+    # Copy marks to GL.
+    RL[mrks]  <= mrk()
+    GL[mrks]  <= RL()
+    # Read 16 bits from each marked plat.
+    RL[::]    <=  src() &  GL()
+    # Or in original data to unmarked plats.
+    RL[::]    |=  dst() & ~GL()
+    # Copy results to dst.
+    dst[::]   <= RL()
+    return
+
+
+@belex_apl
 def write_to_marked(Belex,
         dst: VR, mrk: VR, mrks: Section, val: u16) -> VR:
     r"""Famous algorithm for writing val to the marked plats
     of dst, where the markers are stored in the 2048 bits
     of section mrks of VR mrk."""
     RL[:] <= 0
-    with apl_commands("Copy marks to GL.") as instruction_1:
+    with apl_commands("Copy marks to GL.") \
+            as instruction_1:
         RL[mrks]  <= mrk()
         GL[mrks]  <= RL()
-    with apl_commands("Copy original data to unmarked plats.") \
-         as instruction_2:
+    with apl_commands("Copy inv of dst original data to unmarked plats.") \
+            as instruction_2:
+        # Marked plats receive 0 because ~GL is zero for them.
         RL[val]   <= ~dst() & ~GL()
         RL[~val]  <=  dst() & ~GL()
-    with apl_commands("Copy back to marked plats.") \
-         as instruction_3:
+    with apl_commands("Copy back inv inv dst original data to marked plats.") \
+            as instruction_3:
+        # Writes
         dst[val]  <= ~RL()
         dst[~val] <=  RL()
     return dst

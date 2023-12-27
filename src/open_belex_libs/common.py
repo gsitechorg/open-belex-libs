@@ -59,3 +59,9 @@ def rl_xor_equals_sb(Belex, vr: VR) -> None:
 @belex_apl
 def sb_from_rl(Belex, vr: VR) -> None:
     vr[SM_0XFFFF] <= RL()
+
+
+@belex_apl
+def src_vr_to_dst_vr(Belex, dst: VR, src: VR) -> None:
+    rl_from_sb(src)
+    sb_from_rl(dst)
